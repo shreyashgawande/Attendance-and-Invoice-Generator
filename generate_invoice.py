@@ -31,12 +31,12 @@ def generate_invoice_excel(invoice, leavesTaken:int, salary:int):
     sheet['B20'] = f" Consultation / Professional Charges for the Period of 1st {month_name} {year} to 30th {month_name} {year}"
     invoice.save(filename=f'Consultant Invoice {last_month_name} - {month_name1}.xlsx')
     
-    excel = client.Dispatch("Excel.Application") 
-    path = os.path.join(os.getcwd(), f'Consultant Invoice {last_month_name} - {month_name1}.xlsx')
-    sheets = excel.Workbooks.Open(path) 
-    work_sheets = sheets.Worksheets[0] 
-    work_sheets.ExportAsFixedFormat(0, os.path.join(os.getcwd(), f'Consultant Invoice {last_month_name} - {month_name1}.pdf'))
-    sheets.Close()
+    # excel = client.Dispatch("Excel.Application") 
+    # path = os.path.join(os.getcwd(), f'Consultant Invoice {last_month_name} - {month_name1}.xlsx')
+    # sheets = excel.Workbooks.Open(path) 
+    # work_sheets = sheets.Worksheets[0] 
+    # work_sheets.ExportAsFixedFormat(0, os.path.join(os.getcwd(), f'Consultant Invoice {last_month_name} - {month_name1}.pdf'))
+    # sheets.Close()
     # os.remove(f'Consultant Invoice {last_month_name} - {month_name1}.xlsx')
     # return f'Consultant Invoice {last_month_name} - {month_name1}.pdf'
     return f'Consultant Invoice {last_month_name} - {month_name1}.xlsx'
