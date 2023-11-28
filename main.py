@@ -30,4 +30,5 @@ async def attendance_generator(holidays:list[int] = Query([],description="Number
     return FileResponse(attendance_sheet_path,media_type="xlsx",filename=f'{attendance_sheet_path}')
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+  
