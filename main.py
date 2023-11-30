@@ -19,7 +19,7 @@ async def invoice_generator(leavesTaken:int = Query(0,description="Number of lea
     #     f.write(file.file.read())
     #     f.close() 
     result_file_path = generate_invoice_excel(invoice_file,leavesTaken,salary)
-    return FileResponse(result_file_path,media_type="application/pdf",filename=f'{result_file_path}')
+    return FileResponse(result_file_path,media_type="xlsx",filename=f'{result_file_path}')
 
 
 @app.post('/generate_attendance')
