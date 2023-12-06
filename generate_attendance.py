@@ -3,9 +3,8 @@ from openpyxl import *
 from openpyxl.styles import *
 from datetime import datetime, timedelta
 import calendar
-# from win32com import client
 import os
-
+from io import BytesIO
 
 
 def generate_attendance(holidays:list, name:str):
@@ -84,8 +83,14 @@ def generate_attendance(holidays:list, name:str):
     sheet['I7'] = absentDays
     
     if last_month_days==31:
-         month31.save(filename=f'Attendance {last_month_name} - {month_name}.xlsx') 
-    else:
-         month30.save(filename=f'Attendance {last_month_name} - {month_name}.xlsx') 
+         output = BytesIO()
+         month31.save(output)
+         
 
-    return f'Attendance {last_month_name} - {month_name}.xlsx'
+    else:
+         output = BytesIO()
+         month30.save(output)
+         
+
+    return f'Attendance {last_month_name} - {month_name}.xlsx' , output
+   
