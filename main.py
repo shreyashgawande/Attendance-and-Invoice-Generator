@@ -1,6 +1,7 @@
 from fastapi import (FastAPI,UploadFile,File,Query)
 import uvicorn
-from fastapi.responses import FileResponse
+import io
+from fastapi.responses import FileResponse,StreamingResponse
 from generate_invoice import *
 from generate_attendance import *
 
@@ -14,21 +15,22 @@ async def invoice_generator(leavesTaken:int = Query(0,description="Number of lea
                      salary:int = Query(40000,description="Monthly salary in INR"),
                      file:UploadFile = File(...)):
     invoice_file = file.file
-    # invoice_file_path = os.path.join(os.getcwd(),file.filename)
-    # with open(invoice_file_path,"wb") as f:
-    #     f.write(file.file.read())
-    #     f.close() 
-    result_file_path = generate_invoice_excel(invoice_file,leavesTaken,salary)
-    return FileResponse(result_file_path,media_type="xlsx",filename=f'{result_file_path}')
+    result_file_path,invoice_bytes = generate_invoice_excel(invoice_file,leavesTaken,salary)
+    invoice_bytes.seek(0)
+    return StreamingResponse(io.BytesIO(invoice_bytes.read()),media_type="xlsx",headers={"Content-Disposition":f"attachment; filename={result_file_path}"})
 
 
 @app.post('/generate_attendance')
 async def attendance_generator(holidays:list[int] = Query([],description="Number of Holidays taken"),
                                name:str = Query("",description="Please enter your name")):
+    attendance_sheet_path,excel_bytes = generate_attendance(holidays,name)
+    print(type(excel_bytes))
+    excel_bytes.seek(0)
+    return StreamingResponse(io.BytesIO(excel_bytes.read()), media_type="xlsx", headers={"Content-Disposition": f"attachment; filename={attendance_sheet_path}"})
     
-    attendance_sheet_path = generate_attendance(holidays,name)
-    return FileResponse(attendance_sheet_path,media_type="xlsx",filename=f'{attendance_sheet_path}')
+
+
+
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
-  
+    uvicorn.run(app, host="127.0.0.1", port=8000)
