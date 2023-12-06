@@ -5,8 +5,9 @@ from openpyxl import *
 from openpyxl.styles import *
 from datetime import datetime, timedelta
 import calendar
-# from win32com import client
 import os
+import io
+from io import BytesIO
 
 
 def generate_invoice_excel(invoice, leavesTaken:int, salary:int):
@@ -24,7 +25,7 @@ def generate_invoice_excel(invoice, leavesTaken:int, salary:int):
     total_amount = salary - amount_deducted
     ingine = inflect.engine()
     total_amount_in_words = ingine.number_to_words(total_amount)
-    total_amount_in_words="INR: "+total_amount_in_words
+    total_amount_in_words="INR: "+total_amount_in_words + " only"
 
     invoice = openpyxl.load_workbook(invoice)
     sheet = invoice.active
@@ -34,7 +35,10 @@ def generate_invoice_excel(invoice, leavesTaken:int, salary:int):
     sheet['G24'] = total_amount
     sheet['C28']= total_amount_in_words
     sheet['B20'] = f" Consultation / Professional Charges for the Period of 1st {month_name} {year} to 30th {month_name} {year}"
-    invoice.save(filename=f'Consultant Invoice {last_month_name} - {month_name1}.xlsx')
+    invoice_bytes = io.BytesIO()
+
+    invoice.save(invoice_bytes)
+    # invoice.save(filename=f'Consultant Invoice {last_month_name} - {month_name1}.xlsx')
     
     # excel = client.Dispatch("Excel.Application") 
     # path = os.path.join(os.getcwd(), f'Consultant Invoice {last_month_name} - {month_name1}.xlsx')
@@ -45,4 +49,4 @@ def generate_invoice_excel(invoice, leavesTaken:int, salary:int):
     # os.remove(f'Consultant Invoice {last_month_name} - {month_name1}.xlsx')
 
     # return f'Consultant Invoice {last_month_name} - {month_name1}.pdf'
-    return os.path.join(f'Consultant Invoice {last_month_name} - {month_name1}.xlsx')
+    return (f'Consultant Invoice {last_month_name} - {month_name1}.xlsx',invoice_bytes)
